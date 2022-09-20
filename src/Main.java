@@ -1,39 +1,58 @@
 public class Main {
     public static void main(String[] args) {
-        String login = "123abc";
-        String password = "LA56j";
+        String login = "123abc_875678*&^&*&^&^";
+        String password = "LA56jl;kfkfv";
         String confirmPassword = "LA56j";
-        personInfo(login, password, confirmPassword);
+        System.out.println(parameters(login, password, confirmPassword));
+    }
+
+    public static boolean parameters(String login, String password, String confirmPassword) {
+        boolean checkLogin;
+        boolean checkPassword;
+        boolean checkLengthLogin;
+        boolean checkLengthPassword;
+        boolean comparePassword;
+        try {
+            checkLogin = checkValidation(login);
+            checkPassword = checkValidation(password);
+            checkLengthLogin = checkLoginLength(login);
+            checkLengthPassword = checkPasswordLength(password);
+            comparePassword = comparingPassword(password, confirmPassword);
+        } catch (WrongLoginException | WrongPasswordException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+        return checkLogin && checkPassword && checkLengthLogin && checkLengthPassword && comparePassword;
 
     }
-    public static boolean personInfo(String login, String password, String confirmPassword ){
-        boolean checkLogin = login.matches("^[a-z0-9_]+$");
-        boolean checkPassword = password.matches("^[a-z0-9_]+$");
-        boolean comparePassword = confirmPassword.equals(password);
-        if (login.length() > 20 ||(!checkLogin)) {
-            try {
-                throw new WrongLoginException();
-            } catch (WrongLoginException e) {
-                System.out.println("Логин должен содержать в себе только латинские буквы, цифры, знак подчеркивания." +
-                        "И равен или меньше 20 символов.");
-            }
-        } else if (password.length() > 20 || (!checkPassword)){
-            try {
-                throw new WrongPasswordException();
-            } catch (WrongPasswordException e) {
-                System.out.println("Пароль должен содержать в себе только латинские буквы, цифры, знак подчеркивания." +
-                        "И равен 20 символов.");
-            }
-        } else if (!comparePassword) {
-            try {
-                throw new WrongPasswordException();
-            } catch (WrongPasswordException e) {
-                System.out.println("Пароли не совпадают");
-            }
-
-        } else {
-            System.out.println("Регистрация прошла успешно");
+    public static boolean checkValidation(String checkWord) {
+        if (checkWord == null) {
+            System.out.println("Слово является null");
+            return false;
+        }
+        if (checkWord.matches("\\w+")) {
+            return true;
+        }
+        System.out.println("Недопустимые символы в слове");
+        return false;
+    }
+    public static boolean checkLoginLength(String login) throws WrongLoginException {
+        if (login.length() > 20) {
+            throw new WrongLoginException("Слишком длинный пароль");
         }
         return true;
     }
+    public static boolean checkPasswordLength(String password) {
+        if (password.length() > 19) {
+            System.out.println("Слишком длинный пароль");
+            return false;
+        }
+        return true;
+    }
+    public static boolean comparingPassword(String password, String confirmPassword) throws WrongPasswordException{
+        if (password.equals(confirmPassword))
+            return true;
+        throw new WrongPasswordException("Пароли не совпадают");
+    }
+
 }
